@@ -177,7 +177,7 @@
       selectedGame = '';
       document.getElementById('game-input').value = '';
       renderFilteredDetails();
-      // 사용자 선택에 따라 게임 목록은 사전식 정렬되어야 함
+      // 사용자 선택에 따라 게임 목록은 사전식 정렬
       renderGameDatalist();
     }
 
@@ -203,16 +203,58 @@
         }
 
         const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${item.game}</td>
-          <td>${item.name}</td>
-          <td>${item.score}</td>
-          <td>${item.elapsedTime}</td>
-          <td>${timePerProblem.toFixed(2)}</td>
-          <td>${new Date(item.timestamp).toLocaleString()}</td>
-        `;
+
+        // ────────────── 핵심: 클릭으로 필터링할 수 있도록 a태그+onclick 추가 ──────────────
+        // 게임 셀
+        const gameTd = document.createElement('td');
+        gameTd.innerHTML = `<a href="#" onclick="goToGame('${item.game}')">${item.game}</a>`;
+
+        // 이름 셀
+        const nameTd = document.createElement('td');
+        nameTd.innerHTML = `<a href="#" onclick="goToUser('${item.name}')">${item.name}</a>`;
+
+        // 나머지 셀들
+        const scoreTd = document.createElement('td');
+        scoreTd.textContent = item.score;
+
+        const elapsedTimeTd = document.createElement('td');
+        elapsedTimeTd.textContent = item.elapsedTime;
+
+        const timePerProblemTd = document.createElement('td');
+        timePerProblemTd.textContent = timePerProblem.toFixed(2);
+
+        const timestampTd = document.createElement('td');
+        timestampTd.textContent = new Date(item.timestamp).toLocaleString();
+
+        // tr에 append
+        tr.appendChild(gameTd);
+        tr.appendChild(nameTd);
+        tr.appendChild(scoreTd);
+        tr.appendChild(elapsedTimeTd);
+        tr.appendChild(timePerProblemTd);
+        tr.appendChild(timestampTd);
+
         tbody.appendChild(tr);
       });
+    }
+
+    // ✅ 게임/이름 클릭 시 필터링 함수
+    function goToGame(game) {
+      // 다른 페이지로 이동하려면 window.location.href = "/somePage?game=" + encodeURIComponent(game);
+      // 여기서는 같은 화면에서 필터링만
+      selectedGame = game;
+      document.getElementById('game-input').value = game;
+      selectedUser = '';
+      document.getElementById('user-input').value = '';
+      renderFilteredDetails();
+    }
+
+    function goToUser(name) {
+      selectedUser = name;
+      document.getElementById('user-input').value = name;
+      selectedGame = '';
+      document.getElementById('game-input').value = '';
+      renderFilteredDetails();
     }
 
     // ✅ 엑셀로 내보내기
